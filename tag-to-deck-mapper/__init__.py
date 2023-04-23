@@ -31,7 +31,7 @@ def show_mapping_dialog(note) -> None:
     layout = create_layout(combo_box, buttons)
 
     dialog.setLayout(layout)
-    dialog.setGeometry(800, 500, 300, 300)
+    dialog.setGeometry(800, 500, 250, 100)
     dialog.show()
 
 
