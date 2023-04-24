@@ -4,6 +4,9 @@ from aqt.qt import *
 from anki.notes import Note
 
 __name__ = "tag-to-deck-mapper"
+
+from aqt.utils import *
+
 mappings_key = 'mappings'
 ignore_tags_key = 'ignoredTags'
 
@@ -84,11 +87,20 @@ def add_tags_to_ignore_list(note, dialog) -> None:
     dialog.close()
 
 
-def set_deck(deck, note) -> None:
+def set_deck(deck: str, note: Note) -> None:
     did = mw.col.decks.id_for_name(deck)
     for card in note.cards():
         card.did = did
         mw.col.update_card(card)
+    show_tooltip(deck)
+
+
+def show_tooltip(deck_name: str) -> None:
+    tooltip("Deck was automatically changed to % s" % deck_name)
 
 
 gui_hooks.add_cards_did_add_note.append(set_deck_from_config_tags)
+
+action = QAction("test", mw)
+qconnect(action.triggered, show_tooltip)
+mw.form.menuTools.addAction(action)
