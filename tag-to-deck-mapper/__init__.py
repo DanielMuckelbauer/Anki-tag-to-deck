@@ -1,11 +1,10 @@
 from aqt import mw
 from aqt import gui_hooks
-from aqt.qt import *
 from anki.notes import Note
-
-__name__ = "tag-to-deck-mapper"
-
 from aqt.utils import *
+
+# addonId = "tag-to-deck-mapper" -> for local development
+addonId = "617676051"
 
 mappings_key = 'mappings'
 ignore_tags_key = 'ignoredTags'
@@ -14,7 +13,7 @@ ignore_tags_key = 'ignoredTags'
 def set_deck_from_config_tags(note: Note) -> None:
     if len(note.tags) > 1:
         return
-    config = mw.addonManager.getConfig(__name__)
+    config = mw.addonManager.getConfig(addonId)
     if any(tag in note.tags for tag in config[ignore_tags_key]):
         return
     mappings = config[mappings_key]
@@ -69,9 +68,9 @@ def create_layout(combo_box, buttons) -> QVBoxLayout:
 
 
 def update_config(deck, tags) -> None:
-    config = mw.addonManager.getConfig(__name__)
+    config = mw.addonManager.getConfig(addonId)
     config[mappings_key].setdefault(deck, []).extend(tags)
-    mw.addonManager.writeConfig(__name__, config)
+    mw.addonManager.writeConfig(addonId, config)
 
 
 def set_deck_and_update_config(deck, note, dialog) -> None:
@@ -81,9 +80,9 @@ def set_deck_and_update_config(deck, note, dialog) -> None:
 
 
 def add_tags_to_ignore_list(note, dialog) -> None:
-    config = mw.addonManager.getConfig(__name__)
+    config = mw.addonManager.getConfig(addonId)
     config[ignore_tags_key] = config[ignore_tags_key] + note.tags
-    mw.addonManager.writeConfig(__name__, config)
+    mw.addonManager.writeConfig(addonId, config)
     dialog.close()
 
 
@@ -100,7 +99,3 @@ def show_tooltip(deck_name: str) -> None:
 
 
 gui_hooks.add_cards_did_add_note.append(set_deck_from_config_tags)
-
-action = QAction("test", mw)
-qconnect(action.triggered, show_tooltip)
-mw.form.menuTools.addAction(action)
